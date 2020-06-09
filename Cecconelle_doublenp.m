@@ -1,6 +1,6 @@
 %% _____double np another way
 clc; close all; clear;
-
+tic;
  % Neutron energy
  Eneutron=2.45; % MeV
  
@@ -45,7 +45,7 @@ k=0.21;
 %     LO1_dnp=k.*(Ep1_dnp).^(Beta);  % LO1
     % Ep___
     
-    LO1_dnp=linspace(0, L(iL), 1e4);
+    LO1_dnp=linspace(0, L(iL), 1e7);
     Ep1_dnp= (LO1_dnp./k).^(1/Beta);
 
     % ___L2___
@@ -62,26 +62,7 @@ k=0.21;
      clear('Ed_dnp')
      Ed_dnp=(Ep2_dnp + Ep1_dnp); 
     
-%     % plot (Ep1_dnp+Ep2_dnp)
-%     figure;
-% %     plot(LO1_dnp, (Ep1_dnp+Ep2_dnp), 'k-'); hold on;
-%     plot(LO1_dnp, Ed_dnp, 'g:', 'LineWidth',2); hold on;
-%     plot(LO1_dnp, Ep1_dnp, 'r--'); hold on;
-%     plot(LO1_dnp, Ep2_dnp, 'b--')
-%     line([0, 0.8], [Eneutron Eneutron]); hold on;
-%     ylim([0 3])
-%     xlabel('LO1')
-%     ylabel('Total energy (MeV)')
-%     legend('Ed = Ep1 + Ep2','Ep1','Ep2', 'Eneutron= 2.45 MeV', 'Location', 'southoutside');
-%     set(gca, 'FontSize', 13, 'FontWeight', 'bold', 'LineWidth', 2);
-%     pbaspect([1.5 1 1]);
-  
 
-    
-    
-    
-%     LO2_dnp= MaxLO_dnp-LO1_dnp;
-%     Ep2_dnp = (LO2_dnp./k).^(1/Beta);
    
     % PDF
     PDF_L1_dnp= (1/Eneutron).*(1./(Beta.*LO1_dnp)).*((LO1_dnp./k).^(1/Beta));
@@ -94,25 +75,7 @@ k=0.21;
     PDF_resultant_dnp = (PDF_L1_dnp.*PDF_L2_dnp);
     
     
-%     PDF_L2_dnp= PDF_L2_dnp/trapz(LO1_dnp, PDF_L2_dnp);
-    
-%     LO2_Ep2_c=MaxEp_dnp - LO1_Ep1_c;
-%     LO2_c= k*(LO2_Ep2_c).^(Beta);
 
-   
-
-%     figure; 
-%     subplot(2,1,1)
-%     plot(LO1_dnp, PDF_L2_dnp, 'LineWidth', 2);
-%     xlabel('LO2 (MeVee)');
-%     ylabel('PDF (a.u.)')
-%     
-%     subplot(2,1,2)
-%     plot(Ep1_dnp, PDF_L2_dnp, 'LineWidth', 2);
-%     xlabel('Ep2 (MeV)');
-%     ylabel('PDF (a.u.)')
-    
-    % check (Ep2_dnp + Ep1_dnp) < Eneutron, else set zero
 
      
      clear("i_EdLTEn");
@@ -136,7 +99,8 @@ k=0.21;
         clear('U', 'V', 'W', 'm','n');
         x=fliplr(PDF_L1_dnp); %_1
         h=fliplr(PDF_L2_dnp); %_1
-
+        
+        
 %           x=PDF_L1_c;            %_2
 %           h=fliplr(PDF_L2_c);    %_2
 
@@ -173,12 +137,7 @@ k=0.21;
 %             
         for nR=1:1:m+n-1
             
-%             % find the corresponding total light output per row
-%             if nR<=length(LO1_c)
-%                  totL(nR)= sum([LO1_c(1:nR), LO2_c(1:nR)], 'default');
-%             else 
-%                  totL(nR)= sum([LO1_c((nR+1-length(LO1_c)): end), LO2_c(1: end-(nR-length(LO1_c)))], 'default');
-%             end
+
            
             nC=1;
 			totL(nR)=0;
@@ -190,6 +149,10 @@ k=0.21;
             end
 
             nR=nR+1;
+            
+            if mod(nR, 10000) ==0
+            sprintf('No of row= %s / %s', string(nR), string(length(V)))
+            end
 
         end
         
@@ -303,15 +266,9 @@ k=0.21;
         clear('fN');
         fN=sprintf('data_convL_%s_k_%s_Beta_%s_Steps_%s.txt', num2str(L(iL)), num2str(k), num2str(Beta), num2str(length(LO1_dnp)));
         writetable(tbl, fN)
-%         clear('fN');
-%         fN=sprintf('dnp_L_%s.png', num2str(L(iL)));
-%         saveas(gcf, fN, 'png'); clear('fN');
-% %         fN=sprintf('dnp_L_%s.fig', num2str(L(iL)));
-% %         saveas(gcf,fN, 'fig'); clear('fN');
-%         
 %         close all;
         
       
 %     iL=iL+1;
 %     end
-    
+    toc;
