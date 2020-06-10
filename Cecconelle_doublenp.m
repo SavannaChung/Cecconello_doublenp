@@ -10,16 +10,16 @@ tic;
 % clear('prompt');
  % prompt= 'Input Beta. Cecconell: 1.5 |Verbinski: 1.23 | EJ299: 1.63 (1.44| 1.82) . >>>';
  % Beta=str2num(input(prompt, 's' ));
-Beta= 1.5;
+Beta= 1.23;
  % Define parameter k
  %clear('prompt');
  % prompt= 'Input k. Cecconell: 0.21 |Verbinski: 0.265 |EJ299: 0.12 (0.08 | 0.16). >>>';
  %k=str2num(input(prompt, 's' ));
-k=0.21;
+k=0.266;
 %     k=0.205; % Cecconello: MeV^(-Beta) k=0.204; k ~ 0.21MeV^(-Beta)
 
 % Define maximum light output 
- MaxLO=k*(Eneutron)^(Beta);
+ MaxLO=round(k*(Eneutron)^(Beta), 5);
 
 % let the oberserved light output be L
 %     L=MaxLO;
@@ -34,7 +34,7 @@ k=0.21;
 
     L_Obs=0.56945;
     
-    iL=find(L==L_Obs);
+    iL=find(L==L_Obs, 1, 'first');
     clear('L_Obs');
     
     % ___L1___
@@ -45,7 +45,7 @@ k=0.21;
 %     LO1_dnp=k.*(Ep1_dnp).^(Beta);  % LO1
     % Ep___
     
-    LO1_dnp=linspace(0, L(iL), 1e7);
+    LO1_dnp=linspace(0, L(iL), 1e2);
     Ep1_dnp= (LO1_dnp./k).^(1/Beta);
 
     % ___L2___
@@ -151,7 +151,7 @@ k=0.21;
             nR=nR+1;
             
             if mod(nR, 10000) ==0
-            sprintf('No of row= %s / %s', string(nR), string(length(V)))
+            sprintf('%s seonds | Percentage completed= %s ', string(round(toc, 2)), string(round(nR./length(V), 2)));
             end
 
         end
